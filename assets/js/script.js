@@ -1,17 +1,12 @@
 // Assignment Code
 var generateBtn = document.querySelector("#generate");
 
-var letters = "abcdefghijklmnopqrstuvwxyz";
-var lowerArray = letters.split("");
-
-var numbers = "1234567890";
-var numbersArray = numbers.split("");
-
-var upperletters = letters.toUpperCase();
+var letters = "abcdefghijklmnopqrstuvwxyz".split("");
+var numbers = "1234567890".split("")
+var upperletters = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
 var upperArray = upperletters.split("");
+var special = "!#$%&'()*+,-./:;<=>?@[]^_`{|}~".split("");
 
-var special = "!#$%&'()*+,-./:;<=>?@[]^_`{|}~";
-var specialArray = special.split("");
 
 var generatedPassword = [];
 
@@ -21,8 +16,10 @@ var specialCon = 0;
 var numbersCon = 0;
 var categories = 0;
 var confirmAmount = 0;
+
 // Write password to the #password input
 function writePassword() {
+  password = ""
   var password = generatePassword();
   var passwordText = document.querySelector("#password");
 
@@ -33,8 +30,9 @@ function generatePassword() {
   lowerCon = 0;
   upperCon = 0;
   specialCon = 0;
-  numbers = 0;
+  numbersCon = 0;
   categories = 0;
+  generatedPassword = []
   confirmAmount = window.prompt(
     "Please input desired password length between 8 and 128 characters:"
   );
@@ -65,7 +63,28 @@ function generatePassword() {
     specialCon++;
   }
   categories = lowerCon + upperCon + specialCon + numbersCon;
-  generateLowercaseLetters();
+ 
+  if (lowerCon > 0) {
+   generateLowercaseLetters();}
+ 
+   if (upperCon > 0) {
+    generateUppercaseLetters()
+  }
+ 
+  if (numbersCon > 0) {
+    generatenumbers()
+  }
+ 
+  if (specialCon > 0) {
+    generateSpecial()
+  }
+
+  while (generatedPassword.length < confirmAmount) {
+    generatedPassword.push(generatedPassword[Math.floor(Math.random() * generatedPassword.length)])
+  }
+
+  shufflePassword(generatedPassword)
+
   return generatedPassword.join("");
 }
 
@@ -76,21 +95,57 @@ function generateLowercaseLetters() {
   );
   for (var i = 0; i < result; i++) {
     generatedPassword.push(
-      lowerArray[Math.floor(Math.random() * lowerArray.length)]
+      letters[Math.floor(Math.random() * letters.length)]
     );
   }
 }
 
 function generateUppercaseLetters() {
-  return upperArray[Math.floor(Math.random() * upperArray.length)];
+  categories--;
+  var result = Math.floor(
+    Math.random() * (confirmAmount - generatedPassword.length - categories) + 1
+  );
+  for (var i = 0; i < result; i++) {
+    generatedPassword.push(
+      upperArray[Math.floor(Math.random() * upperArray.length)]
+    );
+  }
 }
 
 function generatenumbers() {
-  return numbersArray[Math.floor(Math.random() * numbersArray.length)];
+  categories--;
+  var result = Math.floor(
+    Math.random() * (confirmAmount - generatedPassword.length - categories) + 1
+  );
+  for (var i = 0; i < result; i++) {
+    generatedPassword.push(
+      numbers[Math.floor(Math.random() * numbers.length)]
+    );
+  }
 }
 
 function generateSpecial() {
-  return specialArray[Math.floor(Math.random() * specialArray.length)];
+  categories--;
+  var result = Math.floor(
+    Math.random() * (confirmAmount - generatedPassword.length - categories) + 1
+  );
+  for (var i = 0; i < result; i++) {
+    generatedPassword.push(
+      special[Math.floor(Math.random() * special.length)]
+    );
+  }
+}
+
+// Taken from stackoverflow. Randomizes the array using Durstenfeld shuffle algorithm. 
+// Takes previously created generatedPassword array and uses for loop with placeholder variables to rebuild array in random order
+function shufflePassword(generatedPassword) {
+  for (var i = generatedPassword.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = generatedPassword[i];
+      generatedPassword[i] = generatedPassword[j];
+      generatedPassword[j] = temp;
+  }
+  return generatedPassword
 }
 
 // Add event listener to generate button
